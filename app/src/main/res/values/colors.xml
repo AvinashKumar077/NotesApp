@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="light_gray">#a2a2a2</color>
+    <color name="highlight_text_color">#2196F3</color>
+    <color name="coolor1">#FFD6FF</color>
+    <color name="coolor2">#E7C6FF</color>
+    <color name="coolor3">#C8B6FF</color>
+    <color name="coolor4">#B8C0FF</color>
+    <color name="coolor5">#f5efff</color>
+
+</resources>
