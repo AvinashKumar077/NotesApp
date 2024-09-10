@@ -80,7 +80,6 @@ dependencies {
 
     implementation("com.github.ybq:Android-SpinKit:1.4.0")
     implementation("com.google.android.material:material:1.12.0")
-    implementation ("com.google.android.material:material:1.12.0")
 
 }
 kapt {

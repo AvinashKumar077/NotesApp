@@ -1,10 +1,15 @@
 package com.example.notesapp
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -14,9 +19,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.notesapp.adapter.NoteAdapter
 import com.example.notesapp.databinding.FragmentMainBinding
 import com.example.notesapp.models.NoteResponse
+import com.example.notesapp.models.User
 import com.example.notesapp.utils.NetworkResult
 import com.example.notesapp.utils.TokenManager
 import com.example.notesapp.viewmodel.NoteViewmodel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -54,14 +61,58 @@ class MainFragment : Fragment() {
 
 
         // Sign-out button logic
-        binding.btnSignOut.setOnClickListener {
-            // Clear the token
-            tokenManager.saveToken(null)  // Removing the token
-            // Navigate back to the RegisterFragment
-            findNavController().navigate(R.id.action_mainFragment_to_registerFragment)
+        binding.profile.setOnClickListener {
+            showAccountChooserDialog()
         }
 
         bindObservers()
+    }
+
+    private fun showAccountChooserDialog() {
+
+        val user = getUserFromSharedPreferences()
+        Log.d("MainFragment", "User retrieved: $user")
+        // Inflate the layout for the BottomSheetDialog
+        val dialogView = layoutInflater.inflate(R.layout.dialog_profile, null)
+
+        // Create the BottomSheetDialog
+        val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
+        bottomSheetDialog.setContentView(dialogView)
+
+        // Setup views in the dialog
+        val manageAccountButton = dialogView.findViewById<Button>(R.id.manageAccountButton)
+        val userName = dialogView.findViewById<TextView>(R.id.userName)
+        val userEmail = dialogView.findViewById<TextView>(R.id.userEmail)
+        userName.text = user?.userName ?: "Unknown User"
+        userEmail.text = user?.email ?: "unknown@example.com"
+        Log.d("info", "$userName")
+        manageAccountButton.setOnClickListener {
+            tokenManager.saveToken(null)
+            bottomSheetDialog.dismiss()
+            findNavController().navigate(R.id.action_mainFragment_to_registerFragment)
+        }
+
+        // Show the BottomSheetDialog
+        bottomSheetDialog.show()
+    }
+    private fun getUserFromSharedPreferences(): User? {
+        val sharedPref = activity?.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val userJson = sharedPref?.getString("user_data", null)
+        Log.d("MainFragment", "Retrieved user JSON: $userJson")
+
+        return try {
+            if (userJson != null) {
+                val user = Gson().fromJson(userJson, User::class.java)
+                Log.d("MainFragment", "Parsed User: ${user.userName}, ${user.email}")
+                user
+            } else {
+                Log.d("MainFragment", "No user data found in SharedPreferences")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("MainFragment", "Error parsing user data: ${e.message}")
+            null
+        }
     }
 
     private fun bindObservers() {

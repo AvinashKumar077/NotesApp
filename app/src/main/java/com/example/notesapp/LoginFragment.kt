@@ -1,5 +1,6 @@
 package com.example.notesapp
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,11 +13,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.notesapp.databinding.FragmentLoginBinding
+import com.example.notesapp.models.User
 import com.example.notesapp.models.UserRequest
 import com.example.notesapp.utils.NetworkResult
 import com.example.notesapp.utils.TokenManager
 import com.example.notesapp.utils.validateCredentials
 import com.example.notesapp.viewmodel.AuthViewModel
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -81,6 +84,7 @@ class LoginFragment : Fragment() {
             when (it) {
                 is NetworkResult.Success -> {
                     tokenManager.saveToken(it.data!!.token)
+                    saveUserToSharedPreferences(it.data.user)
                     findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
                 }
 
@@ -93,6 +97,12 @@ class LoginFragment : Fragment() {
                 }
             }
         })
+    }
+    private fun saveUserToSharedPreferences(user: User) {
+        val sharedPref = activity?.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val userJson = Gson().toJson(user)
+        sharedPref?.edit()?.putString("user_data", userJson)?.apply()
+        Log.d("AuthFragment", "Saved user data: $userJson")
     }
     override fun onDestroyView() {
         super.onDestroyView()

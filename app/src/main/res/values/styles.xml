@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Define BottomSheetDialogTheme -->
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/ShapeAppearanceOverlay.BottomSheet</item>
+    </style>
+
+    <!-- Define custom shape for Bottom Sheet with Material Components -->
+    <style name="ShapeAppearanceOverlay.BottomSheet" parent="">
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.MaterialComponents.MediumComponent</item>
+        <item name="cornerFamily">rounded</item>  <!-- Ensures the family of corners -->
+        <item name="cornerSize">16dp</item>       <!-- Custom corner size -->
+    </style>
+
+</resources>
